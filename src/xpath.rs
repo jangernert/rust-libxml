@@ -33,7 +33,7 @@ pub struct Context {
   /// Safe reference to the libxml2 context pointer
   pub(crate) context_ptr: ContextRef,
   ///Document contains pointer, needed for ContextPtr, so we need to borrow Document to prevent it's freeing
-  pub(crate) document: DocumentWeak,
+  pub(crate) document: DocumentRef,
 }
 
 ///Essentially, the result of the evaluation of some xpath expression
@@ -53,7 +53,7 @@ impl Context {
     } else {
       Ok(Context {
         context_ptr: Rc::new(RefCell::new(_Context(ctxtptr))),
-        document: Rc::downgrade(&doc.0),
+        document: doc.0.clone(),
       })
     }
   }
@@ -64,7 +64,7 @@ impl Context {
     } else {
       Ok(Context {
         context_ptr: Rc::new(RefCell::new(_Context(ctxtptr))),
-        document: Rc::downgrade(&docref),
+        document: docref.clone(),
       })
     }
   }
@@ -108,7 +108,7 @@ impl Context {
     } else {
       Ok(Object {
         ptr,
-        document: self.document.clone(),
+        document: Rc::downgrade(&self.document),
       })
     }
   }
@@ -123,7 +123,7 @@ impl Context {
     } else {
       Ok(Object {
         ptr,
-        document: self.document.clone(),
+        document: Rc::downgrade(&self.document),
       })
     }
   }
@@ -137,7 +137,7 @@ impl Context {
     } else {
       Ok(Object {
         ptr,
-        document: self.document.clone(),
+        document: Rc::downgrade(&self.document),
       })
     }
   }
